@@ -1,7 +1,7 @@
 import pandas as pd
 import random as rand
 
-class lotteryFestival():
+class lotteryKosenFestival():
     def __init__(self):
         """
         Parameters
@@ -25,11 +25,11 @@ class lotteryFestival():
         # elsxファイルの読み取り
         df_default = pd.read_excel(url, header=0, index_col=0)
         # メールと名前のみ抽出
-        self.df = df_default.loc[:, ['メール', '名前']]
+        df = df_default.loc[:, ['メール', '名前']]
         # メールでソート
-        df = self.df.sort_values('メール')
+        df = df.sort_values('メール')
         # indexの振り直し
-        df = df.reset_index(drop='True')
+        self.df = df.reset_index(drop='True')
         
         # それぞれリストに保存
         self.list_number = []
@@ -68,14 +68,14 @@ class lotteryFestival():
         # 学籍番号を選出
         list_rand_result = rand.sample(self.list_number, winner_count)
         self.list_all_winner_number.extend(list_rand_result)
-        
+        self.list_all_winner_number = sorted(self.list_all_winner_number, reverse=False)
 
         #降順でソート
         list_rand_result = sorted(list_rand_result, reverse=False)
 
         list_winner_number = []
         count = 0
-        #当選者を表示、リストから削除
+        #当選者を表示、リストから削除、全当選者リストに追加
         for number in list_rand_result:
             count += 1
             index = self.list_number.index(number)
@@ -84,6 +84,7 @@ class lotteryFestival():
             list_winner_number.append(number)
             #当選者を表示
             print('当選者', count, ': ', number, ' ', name, sep='')
+        
         
     
     # 全当選者を表示
