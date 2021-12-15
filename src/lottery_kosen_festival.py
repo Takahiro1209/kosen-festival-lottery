@@ -117,4 +117,8 @@ class lotteryKosenFestival():
         print('-----全参加者--------------------')
         for number, name in self.list_attendee:
             print(number, name)
+<<<<<<< HEAD:lottery_kosen_festival.py
         print('--------------------------------')
+=======
+        print('--------------------------------')
+>>>>>>> origin/master:src/lottery_kosen_festival.py
