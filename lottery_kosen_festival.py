@@ -2,23 +2,27 @@ import pandas as pd
 import random as rand
 
 class lotteryKosenFestival():
-    def __init__(self):
-        """
-        Parameters
-        ----------
-        self.list_number : list(int)
-            学籍番号のリスト
-        self.list_name : list(str)
-            名前のリスト
-        self.list_all_winner_number : list(int)
-            全当選者のリスト
-            
-        Returns
-        -------
-        None.
-
-        """
+    """
+    Parameters
+    ----------
+    self.list_number : list(int)
+        学籍番号のリスト
+    self.list_name : list(str)
+        名前のリスト
+    self.list_winner : list(str, str)
+        全当選者のリスト
         
+    Returns
+    -------
+    None.
+
+    """
+    
+    def __init__(self):
+        self.read_excel()
+        
+
+    def read_excel(self):
         url ='attendees.xlsx'
         # 読み取る行数の設定
         pd.set_option('display.max_rows', 10)
@@ -29,19 +33,29 @@ class lotteryKosenFestival():
         # メールでソート
         df = df.sort_values('メール')
         # indexの振り直し
-        self.df = df.reset_index(drop='True')
+        df = df.reset_index(drop='True')
         
         # それぞれリストに保存
+        self.list_attendee = []
         self.list_number = []
         self.list_name = []
+        self.list_winner = []
+
         # indexとその行をそれぞれ取り出す
         for index, item in df.iterrows():
-            self.list_number.append(int(item['メール'][1:8]))
-            self.list_name.append(item['名前'])
+            number = item['メール']
+            name = item['名前']
+            target = '@'
+            index = number.find(target)
+            number = number[:index]
+            if not [number, name] in self.list_winner:
+                self.list_number.append(number)
+                self.list_name.append(name)
+                self.list_attendee.append([number, name])
             
-        self.list_all_winner_number = []
+            
 
-        
+
     # 当選者を抽選
     def select_winner(self, winner_count):
         """
@@ -66,37 +80,41 @@ class lotteryKosenFestival():
             return
         
         # 学籍番号を選出
+        list_rand_result = []
         list_rand_result = rand.sample(self.list_number, winner_count)
-        self.list_all_winner_number.extend(list_rand_result)
-        self.list_all_winner_number = sorted(self.list_all_winner_number, reverse=False)
 
-        #降順でソート
-        list_rand_result = sorted(list_rand_result, reverse=False)
-
-        list_winner_number = []
         count = 0
+        list_winner = []
         #当選者を表示、リストから削除、全当選者リストに追加
         for number in list_rand_result:
             count += 1
             index = self.list_number.index(number)
-            number = self.list_number.pop(index)
             name = self.list_name.pop(index)
-            list_winner_number.append(number)
-            #当選者を表示
-            print('当選者', count, ': ', number, ' ', name, sep='')
+            number = self.list_number.pop(index)
+            
+            list_winner.append([number, name])
+            
+        # 当選者を表示
+        for number, name in list_winner:
+            print(number, name)
+        
+        list_winner = sorted(list_winner, reverse=False)
+        # 今回の当選者を全当選者リストに追加
+        self.list_winner.extend(list_winner)
+        self.list_winner = sorted(self.list_winner, reverse=False)
         
         
-    
     # 全当選者を表示
-    def display_all_winner(self):
+    def display_winner(self):
         print('-----全当選者-----')
-        for number in self.list_all_winner_number:
-            print(number)
+        for number, name in self.list_winner:
+            print(number, name)
         print('-----------------')
         
     
     # 全参加者を表示
     def display_all_attendee(self):
         print('-----全参加者--------------------')
-        print(self.df)
+        for number, name in self.list_attendee:
+            print(number, name)
         print('--------------------------------')

@@ -68,7 +68,7 @@ class powerpoint():
             # テキストフレームのパラグラフを追加
             pg = text_frame.paragraphs[0]
             # 文字を追加
-            pg.text = str(list_text[i])
+            pg.text = str(list_text[i][0]) + '\n' + str(list_text[i][1])
             #フォントサイズを変更
             pg.font.size = Cm(3)
             
